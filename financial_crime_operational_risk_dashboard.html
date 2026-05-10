@@ -1,0 +1,569 @@
+
+<h2 class="sr-only">Financial Crime and Operational Risk Dashboard — 500 AML, Fraud, KYC and Compliance cases across EMEA, APAC, AMER, LATAM and MEA from 2023 to 2024.</h2>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif}
+
+.dash{background:#0b0f1a;color:#e8eaf0;min-height:100vh;padding:0}
+.header{background:linear-gradient(135deg,#0d1b3e 0%,#0a2850 50%,#0d1b3e 100%);border-bottom:1px solid #1e3a5f;padding:18px 28px;display:flex;align-items:center;justify-content:space-between}
+.header-left{display:flex;align-items:center;gap:14px}
+.logo-mark{width:36px;height:36px;background:linear-gradient(135deg,#1a6fff,#0040cc);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark svg{width:20px;height:20px}
+.header-title{font-size:15px;font-weight:600;color:#e8eaf0;letter-spacing:0.01em}
+.header-sub{font-size:11px;color:#5a7fa8;font-family:'DM Mono',monospace;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:20px}
+.live-badge{display:flex;align-items:center;gap:6px;font-size:11px;color:#3dd68c;font-family:'DM Mono',monospace}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#3dd68c;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.period{font-size:11px;color:#5a7fa8;font-family:'DM Mono',monospace}
+
+.nav-tabs{background:#0e1320;border-bottom:1px solid #1a2a40;display:flex;padding:0 28px;gap:0;overflow-x:auto}
+.nav-tab{padding:12px 20px;font-size:12px;font-weight:500;color:#4a6380;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;user-select:none}
+.nav-tab.active{color:#4a9eff;border-bottom-color:#4a9eff}
+.nav-tab:hover:not(.active){color:#a0b4c8}
+
+.content{padding:20px 28px;display:none}
+.content.active{display:block}
+
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:#111827;border:1px solid #1e3a5f;border-radius:10px;padding:14px 16px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.blue::before{background:linear-gradient(90deg,#1a6fff,#4a9eff)}
+.kpi.amber::before{background:linear-gradient(90deg,#d97706,#fbbf24)}
+.kpi.red::before{background:linear-gradient(90deg,#dc2626,#f87171)}
+.kpi.teal::before{background:linear-gradient(90deg,#0d9488,#2dd4bf)}
+.kpi.green::before{background:linear-gradient(90deg,#16a34a,#4ade80)}
+.kpi-label{font-size:10px;color:#4a6380;text-transform:uppercase;letter-spacing:0.08em;font-weight:500;margin-bottom:6px}
+.kpi-value{font-size:24px;font-weight:600;color:#e8eaf0;font-family:'DM Mono',monospace;line-height:1}
+.kpi-sub{font-size:10px;color:#4a6380;margin-top:5px}
+.kpi-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;padding:2px 7px;border-radius:4px;margin-top:4px;font-family:'DM Mono',monospace}
+.badge-warn{background:rgba(220,38,38,0.15);color:#f87171}
+.badge-ok{background:rgba(22,163,74,0.15);color:#4ade80}
+.badge-info{background:rgba(26,111,255,0.15);color:#4a9eff}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-65-35{display:grid;grid-template-columns:1.8fr 1fr;gap:14px;margin-bottom:14px}
+.panel{background:#111827;border:1px solid #1e3a5f;border-radius:10px;padding:16px}
+.panel-title{font-size:11px;font-weight:600;color:#4a6380;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.panel-title span{color:#4a9eff;font-size:10px;font-weight:500;text-transform:none;letter-spacing:0}
+
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.bar-label{font-size:11px;color:#a0b4c8;width:130px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:6px;background:#1e2d44;border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width 0.8s ease}
+.bar-val{font-size:11px;color:#4a6380;font-family:'DM Mono',monospace;width:36px;text-align:right;flex-shrink:0}
+
+.donut-wrap{display:flex;align-items:center;gap:16px}
+.donut-legend{flex:1}
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:11px;color:#a0b4c8}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
+.risk-matrix{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.rm-cell{border-radius:6px;padding:10px 8px;text-align:center}
+.rm-label{font-size:9px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;opacity:0.7}
+.rm-val{font-size:18px;font-weight:600;font-family:'DM Mono',monospace}
+.rm-sub{font-size:9px;opacity:0.6;margin-top:2px}
+.rm-low{background:rgba(22,163,74,0.12);border:1px solid rgba(22,163,74,0.2);color:#4ade80}
+.rm-med{background:rgba(217,119,6,0.12);border:1px solid rgba(217,119,6,0.2);color:#fbbf24}
+.rm-high{background:rgba(220,38,38,0.12);border:1px solid rgba(220,38,38,0.2);color:#f87171}
+
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{text-align:left;padding:7px 10px;color:#4a6380;font-weight:500;border-bottom:1px solid #1e2d44;white-space:nowrap;text-transform:uppercase;letter-spacing:0.06em;font-size:10px}
+td{padding:7px 10px;color:#a0b4c8;border-bottom:1px solid #0f1a2a;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(74,158,255,0.04)}
+.td-mono{font-family:'DM Mono',monospace;font-size:10px}
+.td-name{color:#e8eaf0;font-weight:500}
+
+.pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:10px;font-family:'DM Mono',monospace;font-weight:500}
+.pill-high{background:rgba(220,38,38,0.15);color:#f87171}
+.pill-med{background:rgba(217,119,6,0.15);color:#fbbf24}
+.pill-low{background:rgba(22,163,74,0.15);color:#4ade80}
+.pill-breach{background:rgba(220,38,38,0.12);color:#f87171}
+.pill-met{background:rgba(22,163,74,0.12);color:#4ade80}
+
+.score-bar{display:inline-block;height:4px;border-radius:2px;vertical-align:middle}
+
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #0f1a2a}
+.stat-row:last-child{border-bottom:none}
+.stat-key{font-size:11px;color:#4a6380}
+.stat-val{font-size:12px;color:#e8eaf0;font-family:'DM Mono',monospace;font-weight:500}
+
+.region-block{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.r-card{background:#0e1320;border:1px solid #1a2a40;border-radius:8px;padding:10px 12px}
+.r-name{font-size:10px;color:#4a6380;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px}
+.r-cases{font-size:18px;font-weight:600;color:#e8eaf0;font-family:'DM Mono',monospace}
+.r-sub{font-size:10px;color:#4a6380;margin-top:2px}
+.r-bar{height:3px;border-radius:2px;background:#1a6fff;margin-top:6px}
+
+.footer{background:#0e1320;border-top:1px solid #1a2a40;padding:10px 28px;display:flex;align-items:center;justify-content:space-between}
+.footer-text{font-size:10px;color:#2a4060;font-family:'DM Mono',monospace}
+.footer-right{display:flex;gap:20px}
+
+.flag-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.flag-icon{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;font-weight:600;font-family:'DM Mono',monospace}
+.flag-name{font-size:11px;color:#a0b4c8;flex:1}
+.flag-count{font-size:11px;color:#e8eaf0;font-family:'DM Mono',monospace}
+
+.funnel-step{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.funnel-bar{height:28px;border-radius:4px;display:flex;align-items:center;padding-left:10px;font-size:11px;font-weight:500;min-width:80px;transition:width 0.9s ease}
+.funnel-label{font-size:10px;color:#4a6380;width:130px;flex-shrink:0}
+.funnel-count{font-size:11px;color:#4a6380;font-family:'DM Mono',monospace;width:30px;text-align:right}
+
+.insight-card{background:#0e1320;border-left:3px solid #1a6fff;border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:8px}
+.insight-title{font-size:11px;font-weight:600;color:#4a9eff;margin-bottom:3px}
+.insight-text{font-size:11px;color:#6a8aaa;line-height:1.5}
+</style>
+
+<div class="dash">
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo-mark">
+      <svg viewBox="0 0 20 20" fill="none">
+        <rect x="2" y="2" width="7" height="7" rx="1.5" fill="rgba(255,255,255,0.9)"/>
+        <rect x="11" y="2" width="7" height="7" rx="1.5" fill="rgba(255,255,255,0.5)"/>
+        <rect x="2" y="11" width="7" height="7" rx="1.5" fill="rgba(255,255,255,0.5)"/>
+        <rect x="11" y="11" width="7" height="7" rx="1.5" fill="rgba(255,255,255,0.7)"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-title">Financial Crime &amp; Operational Risk Intelligence</div>
+      <div class="header-sub">AML · FRAUD · KYC · TRANSACTION MONITORING · COMPLIANCE</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="live-badge"><span class="live-dot"></span>LIVE REPORTING</div>
+    <div class="period">FY 2023 – 2024 · 500 CASES</div>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchTab('exec')">Executive Summary</div>
+  <div class="nav-tab" onclick="switchTab('sla')">SLA &amp; Performance</div>
+  <div class="nav-tab" onclick="switchTab('crime')">Financial Crime</div>
+  <div class="nav-tab" onclick="switchTab('rootcause')">Root Cause Analysis</div>
+  <div class="nav-tab" onclick="switchTab('reviewer')">Reviewer Scorecard</div>
+</div>
+
+<!-- PAGE 1: EXECUTIVE SUMMARY -->
+<div id="tab-exec" class="content active">
+
+  <div class="kpi-row">
+    <div class="kpi blue">
+      <div class="kpi-label">Total Cases Reviewed</div>
+      <div class="kpi-value">500</div>
+      <div class="kpi-sub">FY2023–2024 portfolio</div>
+      <div class="kpi-badge badge-info">↗ +12% YoY</div>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-label">SLA Breach Rate</div>
+      <div class="kpi-value">36.4%</div>
+      <div class="kpi-sub">182 of 500 cases breached</div>
+      <div class="kpi-badge badge-warn">⚠ Above 25% threshold</div>
+    </div>
+    <div class="kpi teal">
+      <div class="kpi-label">Avg Operational Risk Score</div>
+      <div class="kpi-value">47.9</div>
+      <div class="kpi-sub">Scale: 0–100</div>
+      <div class="kpi-badge badge-info">Medium band</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-label">Escalation Rate</div>
+      <div class="kpi-value">37.4%</div>
+      <div class="kpi-sub">187 cases escalated</div>
+      <div class="kpi-badge badge-warn">⚠ Critical attention</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">SAR Filings</div>
+      <div class="kpi-value">89</div>
+      <div class="kpi-sub">17.8% of total cases</div>
+      <div class="kpi-badge badge-ok">✓ Regulatory reported</div>
+    </div>
+  </div>
+
+  <div class="grid-65-35">
+    <div class="panel">
+      <div class="panel-title">Case Volume by Risk Level — Monthly Trend <span>JUL 2023 – DEC 2024</span></div>
+      <div style="position:relative;height:200px"><canvas id="trendChart" role="img" aria-label="Monthly case trend by risk level from July 2023 to December 2024">Monthly cases split by High, Medium and Low risk.</canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Risk Level Distribution</div>
+      <div class="donut-wrap">
+        <canvas id="donutChart" width="110" height="110" role="img" aria-label="Donut chart: 23.4% High risk, 41.2% Medium risk, 35.4% Low risk">Risk breakdown: 23.4% High, 41.2% Medium, 35.4% Low.</canvas>
+        <div class="donut-legend">
+          <div class="legend-item"><span class="legend-dot" style="background:#f87171"></span>High Risk — 117 (23.4%)</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#fbbf24"></span>Medium Risk — 206 (41.2%)</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#4ade80"></span>Low Risk — 177 (35.4%)</div>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="risk-matrix">
+          <div class="rm-cell rm-low"><div class="rm-label">Low</div><div class="rm-val">177</div><div class="rm-sub">Avg 5d resolution</div></div>
+          <div class="rm-cell rm-med"><div class="rm-label">Medium</div><div class="rm-val">206</div><div class="rm-sub">Avg 12d resolution</div></div>
+          <div class="rm-cell rm-high"><div class="rm-label">High</div><div class="rm-val">117</div><div class="rm-sub">Avg 22d resolution</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">Cases &amp; SLA Performance by Region</div>
+      <div class="region-block">
+        <div class="r-card"><div class="r-name">EMEA</div><div class="r-cases">135</div><div class="r-sub">58 escalated · Avg score 48.8</div><div class="r-bar" style="width:100%"></div></div>
+        <div class="r-card"><div class="r-name">APAC</div><div class="r-cases">136</div><div class="r-sub">55 escalated · Avg score 49.8</div><div class="r-bar" style="width:100%;background:#fbbf24"></div></div>
+        <div class="r-card"><div class="r-name">AMER</div><div class="r-cases">121</div><div class="r-sub">34 escalated · Avg score 45.1</div><div class="r-bar" style="width:89%"></div></div>
+        <div class="r-card"><div class="r-name">LATAM</div><div class="r-cases">64</div><div class="r-sub">23 escalated · Avg score 48.5</div><div class="r-bar" style="width:47%;background:#4ade80"></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Investigation Status Pipeline</div>
+      <div class="funnel-step"><div class="funnel-label">Open</div><div class="funnel-bar" style="background:#1a6fff;width:101px;color:#e8eaf0">101</div></div>
+      <div class="funnel-step"><div class="funnel-label">Pending Information</div><div class="funnel-bar" style="background:#2563eb;width:95px;color:#e8eaf0">95</div></div>
+      <div class="funnel-step"><div class="funnel-label">Escalated</div><div class="funnel-bar" style="background:#dc2626;width:93px;color:#e8eaf0">93</div></div>
+      <div class="funnel-step"><div class="funnel-label">SAR Filed</div><div class="funnel-bar" style="background:#9333ea;width:89px;color:#e8eaf0">89</div></div>
+      <div class="funnel-step"><div class="funnel-label">Under Review</div><div class="funnel-bar" style="background:#d97706;width:82px;color:#e8eaf0">82</div></div>
+      <div class="funnel-step"><div class="funnel-label">Closed — Cleared</div><div class="funnel-bar" style="background:#16a34a;width:40px;color:#e8eaf0">40</div></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-title">Key Insights <span>Automatically generated · 500 cases analysed</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="insight-card"><div class="insight-title">SLA Non-Compliance Concentrated in High-Risk AML</div><div class="insight-text">60% of High-Risk AML cases breach SLA — 4× higher than Low-Risk. Avg resolution 22 days vs. 5 days for Low-Risk cases.</div></div>
+      <div class="insight-card"><div class="insight-title">EMEA &amp; APAC Drive Escalation Volume</div><div class="insight-text">Both regions account for 60% of all escalated cases despite representing 54% of total volume, indicating elevated systemic risk exposure.</div></div>
+      <div class="insight-card"><div class="insight-title">PEP &amp; Correspondent Bank — Outsized Regulatory Risk</div><div class="insight-text">These two segments generate the highest SAR filing rates and average transaction values exceeding £4.5M, amplifying oversight materiality.</div></div>
+      <div class="insight-card"><div class="insight-title">Documentation Quality — Leading Indicator of Failure</div><div class="insight-text">Cases rated Poor/Incomplete have 2.3× higher SLA breach probability and 40% longer resolution cycles — primarily in KYC workflows.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- PAGE 2: SLA PERFORMANCE -->
+<div id="tab-sla" class="content">
+  <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi amber"><div class="kpi-label">SLA Breach Rate</div><div class="kpi-value">36.4%</div><div class="kpi-sub">Target: &lt;15%</div><div class="kpi-badge badge-warn">⚠ Critical</div></div>
+    <div class="kpi blue"><div class="kpi-label">Avg Resolution Time</div><div class="kpi-value">11.5d</div><div class="kpi-sub">Target: &lt;10 days</div><div class="kpi-badge badge-warn">1.5d over target</div></div>
+    <div class="kpi red"><div class="kpi-label">Cases Breached</div><div class="kpi-value">182</div><div class="kpi-sub">318 met SLA</div><div class="kpi-badge badge-warn">Max: 44 days</div></div>
+    <div class="kpi green"><div class="kpi-label">Total Txn Value</div><div class="kpi-value">£1.46B</div><div class="kpi-sub">Under case review</div><div class="kpi-badge badge-info">Materiality high</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">SLA Breach Rate by Case Type</div>
+      <div class="bar-row"><div class="bar-label">Compliance Review</div><div class="bar-track"><div class="bar-fill" style="width:49.1%;background:#dc2626"></div></div><div class="bar-val">49.1%</div></div>
+      <div class="bar-row"><div class="bar-label">KYC</div><div class="bar-track"><div class="bar-fill" style="width:38.4%;background:#ea580c"></div></div><div class="bar-val">38.4%</div></div>
+      <div class="bar-row"><div class="bar-label">Transaction Monitoring</div><div class="bar-track"><div class="bar-fill" style="width:37.1%;background:#d97706"></div></div><div class="bar-val">37.1%</div></div>
+      <div class="bar-row"><div class="bar-label">AML</div><div class="bar-track"><div class="bar-fill" style="width:36.2%;background:#d97706"></div></div><div class="bar-val">36.2%</div></div>
+      <div class="bar-row"><div class="bar-label">Fraud</div><div class="bar-track"><div class="bar-fill" style="width:25.3%;background:#16a34a"></div></div><div class="bar-val">25.3%</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Resolution Time by Risk Level</div>
+      <div style="position:relative;height:180px"><canvas id="resChart" role="img" aria-label="Average resolution time by risk level">Low risk averages 5 days, Medium 12 days, High 22 days.</canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">Case Count by Case Type</div>
+      <div class="bar-row"><div class="bar-label">AML</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#1a6fff"></div></div><div class="bar-val">149</div></div>
+      <div class="bar-row"><div class="bar-label">KYC</div><div class="bar-track"><div class="bar-fill" style="width:75.2%;background:#1a6fff"></div></div><div class="bar-val">112</div></div>
+      <div class="bar-row"><div class="bar-label">Transaction Mon.</div><div class="bar-track"><div class="bar-fill" style="width:65.1%;background:#1a6fff"></div></div><div class="bar-val">97</div></div>
+      <div class="bar-row"><div class="bar-label">Fraud</div><div class="bar-track"><div class="bar-fill" style="width:58.4%;background:#1a6fff"></div></div><div class="bar-val">87</div></div>
+      <div class="bar-row"><div class="bar-label">Compliance Review</div><div class="bar-track"><div class="bar-fill" style="width:36.9%;background:#1a6fff"></div></div><div class="bar-val">55</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">SLA Status Summary</div>
+      <div style="margin-top:4px">
+        <div class="stat-row"><span class="stat-key">SLA Met</span><span class="stat-val" style="color:#4ade80">318 cases (63.6%)</span></div>
+        <div class="stat-row"><span class="stat-key">SLA Breached</span><span class="stat-val" style="color:#f87171">182 cases (36.4%)</span></div>
+        <div class="stat-row"><span class="stat-key">Avg Resolution — Low Risk</span><span class="stat-val">5.0 days</span></div>
+        <div class="stat-row"><span class="stat-key">Avg Resolution — Medium Risk</span><span class="stat-val">12.0 days</span></div>
+        <div class="stat-row"><span class="stat-key">Avg Resolution — High Risk</span><span class="stat-val" style="color:#f87171">22.0 days</span></div>
+        <div class="stat-row"><span class="stat-key">Maximum Resolution Time</span><span class="stat-val" style="color:#f87171">44 days</span></div>
+        <div class="stat-row"><span class="stat-key">Cases Pending Remediation</span><span class="stat-val" style="color:#fbbf24">Pending + In Progress</span></div>
+        <div class="stat-row"><span class="stat-key">Highest Breach Type</span><span class="stat-val" style="color:#f87171">Compliance Review 49.1%</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: FINANCIAL CRIME -->
+<div id="tab-crime" class="content">
+  <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi red"><div class="kpi-label">SAR Filings</div><div class="kpi-value">89</div><div class="kpi-sub">17.8% of all cases</div><div class="kpi-badge badge-warn">Regulatory filed</div></div>
+    <div class="kpi amber"><div class="kpi-label">Compliance Flag Rate</div><div class="kpi-value">61.0%</div><div class="kpi-sub">305 flagged cases</div><div class="kpi-badge badge-warn">Above benchmark</div></div>
+    <div class="kpi teal"><div class="kpi-label">Total Txn Under Review</div><div class="kpi-value">£1.46B</div><div class="kpi-sub">Across 500 cases</div><div class="kpi-badge badge-info">High materiality</div></div>
+    <div class="kpi blue"><div class="kpi-label">Escalated Cases</div><div class="kpi-value">187</div><div class="kpi-sub">37.4% escalation rate</div><div class="kpi-badge badge-warn">⚠ Elevated</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">Compliance Flag Distribution <span>305 flagged cases (excl. None)</span></div>
+      <div class="flag-row"><div class="flag-icon" style="background:rgba(251,191,36,0.15);color:#fbbf24">UN</div><div class="flag-name">Unusual Pattern</div><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:100%;background:#fbbf24"></div></div><div class="flag-count">65</div></div>
+      <div class="flag-row"><div class="flag-icon" style="background:rgba(248,113,113,0.15);color:#f87171">ST</div><div class="flag-name">Structuring</div><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:95.4%;background:#f87171"></div></div><div class="flag-count">62</div></div>
+      <div class="flag-row"><div class="flag-icon" style="background:rgba(167,139,250,0.15);color:#c4b5fd">PE</div><div class="flag-name">PEP Exposure</div><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:70.8%;background:#c4b5fd"></div></div><div class="flag-count">46</div></div>
+      <div class="flag-row"><div class="flag-icon" style="background:rgba(220,38,38,0.15);color:#f87171">SA</div><div class="flag-name">Sanctions Hit</div><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:69.2%;background:#dc2626"></div></div><div class="flag-count">45</div></div>
+      <div class="flag-row"><div class="flag-icon" style="background:rgba(234,179,8,0.15);color:#fde047">HJ</div><div class="flag-name">High-Risk Jurisdiction</div><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:64.6%;background:#ca8a04"></div></div><div class="flag-count">42</div></div>
+      <div class="flag-row"><div class="flag-icon" style="background:rgba(239,68,68,0.12);color:#fca5a5">AM</div><div class="flag-name">Adverse Media</div><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:44.6%;background:#ef4444"></div></div><div class="flag-count">29</div></div>
+      <div class="flag-row"><div class="flag-icon" style="background:rgba(148,163,184,0.12);color:#94a3b8">SF</div><div class="flag-name">Source of Funds Unclear</div><div class="bar-track" style="flex:1"><div class="bar-fill" style="width:24.6%;background:#64748b"></div></div><div class="flag-count">16</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Escalation Rate by Case Type</div>
+      <div style="position:relative;height:220px"><canvas id="escalChart" role="img" aria-label="Escalation rate by case type">KYC and Transaction Monitoring have highest escalation rates.</canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">High-Risk Cases by Customer Type</div>
+      <div class="bar-row"><div class="bar-label">Corporate</div><div class="bar-track"><div class="bar-fill" style="width:78%;background:#7c3aed"></div></div><div class="bar-val">Corp</div></div>
+      <div class="bar-row"><div class="bar-label">Correspondent Bank</div><div class="bar-track"><div class="bar-fill" style="width:70%;background:#9333ea"></div></div><div class="bar-val">CB</div></div>
+      <div class="bar-row"><div class="bar-label">PEP</div><div class="bar-track"><div class="bar-fill" style="width:90%;background:#dc2626"></div></div><div class="bar-val">PEP</div></div>
+      <div class="bar-row"><div class="bar-label">Private Banking</div><div class="bar-track"><div class="bar-fill" style="width:55%;background:#ea580c"></div></div><div class="bar-val">PB</div></div>
+      <div class="bar-row"><div class="bar-label">SME</div><div class="bar-track"><div class="bar-fill" style="width:40%;background:#d97706"></div></div><div class="bar-val">SME</div></div>
+      <div class="bar-row"><div class="bar-label">Non-Profit</div><div class="bar-track"><div class="bar-fill" style="width:30%;background:#65a30d"></div></div><div class="bar-val">NPO</div></div>
+      <div class="bar-row"><div class="bar-label">Retail</div><div class="bar-track"><div class="bar-fill" style="width:20%;background:#16a34a"></div></div><div class="bar-val">Ret</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Financial Crime Risk Summary</div>
+      <div class="stat-row"><span class="stat-key">Cases with Sanctions Hit</span><span class="stat-val" style="color:#f87171">45 cases</span></div>
+      <div class="stat-row"><span class="stat-key">PEP Exposure Cases</span><span class="stat-val" style="color:#c4b5fd">46 cases</span></div>
+      <div class="stat-row"><span class="stat-key">Structuring Detected</span><span class="stat-val" style="color:#f87171">62 cases</span></div>
+      <div class="stat-row"><span class="stat-key">High-Risk Jurisdiction</span><span class="stat-val" style="color:#fbbf24">42 cases</span></div>
+      <div class="stat-row"><span class="stat-key">SAR Filed (MLRO Reported)</span><span class="stat-val" style="color:#f87171">89 (17.8%)</span></div>
+      <div class="stat-row"><span class="stat-key">Adverse Media Flagged</span><span class="stat-val" style="color:#fca5a5">29 cases</span></div>
+      <div class="stat-row"><span class="stat-key">Avg Txn Value — PEP Cases</span><span class="stat-val" style="color:#c4b5fd">£2.1M+</span></div>
+      <div class="stat-row"><span class="stat-key">Avg Txn Value — Corp Cases</span><span class="stat-val" style="color:#7c3aed">£6.8M+</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4: ROOT CAUSE -->
+<div id="tab-rootcause" class="content">
+  <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi amber"><div class="kpi-label">Top Root Cause</div><div class="kpi-value" style="font-size:14px;line-height:1.3;margin-top:4px">Process Gap</div><div class="kpi-sub">70 cases (14%)</div></div>
+    <div class="kpi red"><div class="kpi-label">Poor Documentation</div><div class="kpi-value">30%</div><div class="kpi-sub">Poor + Incomplete cases</div><div class="kpi-badge badge-warn">Target &lt;10%</div></div>
+    <div class="kpi blue"><div class="kpi-label">Remediation Completed</div><div class="kpi-value">~20%</div><div class="kpi-sub">Full cycle closed</div><div class="kpi-badge badge-warn">Target &gt;70%</div></div>
+    <div class="kpi teal"><div class="kpi-label">Top Error Category</div><div class="kpi-value" style="font-size:14px;line-height:1.3;margin-top:4px">Human Error</div><div class="kpi-sub">68 cases (13.6%)</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">Root Cause Pareto Analysis <span>Cumulative frequency</span></div>
+      <div class="bar-row"><div class="bar-label">Process Gap</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#dc2626"></div></div><div class="bar-val">70</div></div>
+      <div class="bar-row"><div class="bar-label">Third-Party Failure</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#ea580c"></div></div><div class="bar-val">70</div></div>
+      <div class="bar-row"><div class="bar-label">Policy Ambiguity</div><div class="bar-track"><div class="bar-fill" style="width:92.9%;background:#d97706"></div></div><div class="bar-val">65</div></div>
+      <div class="bar-row"><div class="bar-label">System Limitation</div><div class="bar-track"><div class="bar-fill" style="width:91.4%;background:#ca8a04"></div></div><div class="bar-val">64</div></div>
+      <div class="bar-row"><div class="bar-label">Staff Training Gap</div><div class="bar-track"><div class="bar-fill" style="width:85.7%;background:#1a6fff"></div></div><div class="bar-val">60</div></div>
+      <div class="bar-row"><div class="bar-label">Resource Constraint</div><div class="bar-track"><div class="bar-fill" style="width:85.7%;background:#2563eb"></div></div><div class="bar-val">60</div></div>
+      <div class="bar-row"><div class="bar-label">Inadequate Controls</div><div class="bar-track"><div class="bar-fill" style="width:81.4%;background:#0d9488"></div></div><div class="bar-val">57</div></div>
+      <div class="bar-row"><div class="bar-label">Model Weakness</div><div class="bar-track"><div class="bar-fill" style="width:77.1%;background:#0f766e"></div></div><div class="bar-val">54</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Error Category Distribution</div>
+      <div class="bar-row"><div class="bar-label">Human Error</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#f87171"></div></div><div class="bar-val">68</div></div>
+      <div class="bar-row"><div class="bar-label">Data Quality</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#fb923c"></div></div><div class="bar-val">68</div></div>
+      <div class="bar-row"><div class="bar-label">Threshold Breach</div><div class="bar-track"><div class="bar-fill" style="width:98.5%;background:#fbbf24"></div></div><div class="bar-val">67</div></div>
+      <div class="bar-row"><div class="bar-label">Process Failure</div><div class="bar-track"><div class="bar-fill" style="width:92.6%;background:#a3e635"></div></div><div class="bar-val">63</div></div>
+      <div class="bar-row"><div class="bar-label">Documentation Gap</div><div class="bar-track"><div class="bar-fill" style="width:91.2%;background:#34d399"></div></div><div class="bar-val">62</div></div>
+      <div class="bar-row"><div class="bar-label">Delayed Review</div><div class="bar-track"><div class="bar-fill" style="width:88.2%;background:#22d3ee"></div></div><div class="bar-val">60</div></div>
+      <div class="bar-row"><div class="bar-label">System Error</div><div class="bar-track"><div class="bar-fill" style="width:85.3%;background:#60a5fa"></div></div><div class="bar-val">58</div></div>
+      <div class="bar-row"><div class="bar-label">Policy Non-Compliance</div><div class="bar-track"><div class="bar-fill" style="width:79.4%;background:#818cf8"></div></div><div class="bar-val">54</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">Remediation Status Pipeline</div>
+      <div class="funnel-step"><div class="funnel-label">Pending</div><div class="funnel-bar" style="background:#64748b;width:100px;color:#e8eaf0">~100</div></div>
+      <div class="funnel-step"><div class="funnel-label">In Progress</div><div class="funnel-bar" style="background:#d97706;width:85px;color:#e8eaf0">~85</div></div>
+      <div class="funnel-step"><div class="funnel-label">Escalated to Mgmt</div><div class="funnel-bar" style="background:#dc2626;width:80px;color:#e8eaf0">~80</div></div>
+      <div class="funnel-step"><div class="funnel-label">Regulatory Referral</div><div class="funnel-bar" style="background:#9333ea;width:65px;color:#e8eaf0">~65</div></div>
+      <div class="funnel-step"><div class="funnel-label">Completed</div><div class="funnel-bar" style="background:#16a34a;width:40px;color:#e8eaf0">~40</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Strategic Recommendations</div>
+      <div class="insight-card"><div class="insight-title">Rec 1 — Dynamic SLA Tiering</div><div class="insight-text">Implement risk-weighted SLA targets (5/12/20 days) with automated 75% elapsed-time alerts.</div></div>
+      <div class="insight-card" style="border-left-color:#d97706"><div class="insight-title">Rec 2 — Documentation Quality Gate</div><div class="insight-text">Mandatory completeness checkpoint at case intake aligned to JMLSG Part I. Target: reduce Poor/Incomplete to &lt;10%.</div></div>
+      <div class="insight-card" style="border-left-color:#16a34a"><div class="insight-title">Rec 3 — Risk-Weighted Reviewer Assignment</div><div class="insight-text">High = 3 units, Medium = 2, Low = 1. Prevents burnout and ensures qualified analysts on complex cases.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5: REVIEWER SCORECARD -->
+<div id="tab-reviewer" class="content">
+  <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpi blue"><div class="kpi-label">Total Reviewers</div><div class="kpi-value">10</div><div class="kpi-sub">Active analysts</div></div>
+    <div class="kpi amber"><div class="kpi-label">Highest Breach Rate</div><div class="kpi-value">52.2%</div><div class="kpi-sub">Priya Sharma</div><div class="kpi-badge badge-warn">Requires review</div></div>
+    <div class="kpi green"><div class="kpi-label">Lowest Breach Rate</div><div class="kpi-value">21.6%</div><div class="kpi-sub">Ravi Patel</div><div class="kpi-badge badge-ok">Best performer</div></div>
+    <div class="kpi teal"><div class="kpi-label">Avg Cases/Analyst</div><div class="kpi-value">50</div><div class="kpi-sub">Range: 46–56</div></div>
+  </div>
+
+  <div class="panel" style="margin-bottom:14px">
+    <div class="panel-title">Analyst Performance Scorecard <span>Ranked by SLA Breach Rate</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Analyst</th>
+            <th>Cases</th>
+            <th>Avg Risk Score</th>
+            <th>SLA Breach Rate</th>
+            <th>Breach Performance</th>
+            <th>Avg Resolution</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="td-name">Priya Sharma</td><td class="td-mono">46</td><td class="td-mono">52.7</td><td class="td-mono" style="color:#f87171">52.2%</td><td><div class="score-bar" style="width:52px;background:#dc2626"></div></td><td class="td-mono" style="color:#f87171">14.0d</td><td><span class="pill pill-high">At Risk</span></td></tr>
+          <tr><td class="td-name">Fatima Al-Hassan</td><td class="td-mono">46</td><td class="td-mono">51.8</td><td class="td-mono" style="color:#f87171">45.7%</td><td><div class="score-bar" style="width:46px;background:#dc2626"></div></td><td class="td-mono" style="color:#fbbf24">12.5d</td><td><span class="pill pill-high">At Risk</span></td></tr>
+          <tr><td class="td-name">Emma Thompson</td><td class="td-mono">49</td><td class="td-mono">50.8</td><td class="td-mono" style="color:#fbbf24">42.9%</td><td><div class="score-bar" style="width:43px;background:#d97706"></div></td><td class="td-mono" style="color:#fbbf24">12.7d</td><td><span class="pill pill-med">Monitor</span></td></tr>
+          <tr><td class="td-name">Carlos Mendez</td><td class="td-mono">50</td><td class="td-mono">44.4</td><td class="td-mono" style="color:#fbbf24">38.0%</td><td><div class="score-bar" style="width:38px;background:#d97706"></div></td><td class="td-mono">11.5d</td><td><span class="pill pill-med">Monitor</span></td></tr>
+          <tr><td class="td-name">Tom Becker</td><td class="td-mono">53</td><td class="td-mono">48.4</td><td class="td-mono" style="color:#fbbf24">37.7%</td><td><div class="score-bar" style="width:38px;background:#d97706"></div></td><td class="td-mono" style="color:#fbbf24">13.1d</td><td><span class="pill pill-med">Monitor</span></td></tr>
+          <tr><td class="td-name">Liu Wei</td><td class="td-mono">56</td><td class="td-mono">48.7</td><td class="td-mono" style="color:#fbbf24">37.5%</td><td><div class="score-bar" style="width:38px;background:#d97706"></div></td><td class="td-mono">11.3d</td><td><span class="pill pill-med">Monitor</span></td></tr>
+          <tr><td class="td-name">James Okafor</td><td class="td-mono">47</td><td class="td-mono">48.2</td><td class="td-mono">34.0%</td><td><div class="score-bar" style="width:34px;background:#1a6fff"></div></td><td class="td-mono">10.2d</td><td><span class="pill pill-low">Good</span></td></tr>
+          <tr><td class="td-name">Sarah Mitchell</td><td class="td-mono">52</td><td class="td-mono">42.3</td><td class="td-mono">32.7%</td><td><div class="score-bar" style="width:33px;background:#1a6fff"></div></td><td class="td-mono" style="color:#4ade80">9.6d</td><td><span class="pill pill-low">Good</span></td></tr>
+          <tr><td class="td-name">Anna Kowalski</td><td class="td-mono">50</td><td class="td-mono">43.9</td><td class="td-mono" style="color:#4ade80">24.0%</td><td><div class="score-bar" style="width:24px;background:#16a34a"></div></td><td class="td-mono">10.1d</td><td><span class="pill pill-low">Good</span></td></tr>
+          <tr><td class="td-name">Ravi Patel</td><td class="td-mono">51</td><td class="td-mono">49.1</td><td class="td-mono" style="color:#4ade80">21.6%</td><td><div class="score-bar" style="width:22px;background:#16a34a"></div></td><td class="td-mono" style="color:#4ade80">10.8d</td><td><span class="pill pill-low">Top Performer</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel">
+      <div class="panel-title">Cases by Analyst <span>Workload distribution</span></div>
+      <div class="bar-row"><div class="bar-label">Liu Wei</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#1a6fff"></div></div><div class="bar-val">56</div></div>
+      <div class="bar-row"><div class="bar-label">Tom Becker</div><div class="bar-track"><div class="bar-fill" style="width:94.6%;background:#1a6fff"></div></div><div class="bar-val">53</div></div>
+      <div class="bar-row"><div class="bar-label">Sarah Mitchell</div><div class="bar-track"><div class="bar-fill" style="width:92.9%;background:#1a6fff"></div></div><div class="bar-val">52</div></div>
+      <div class="bar-row"><div class="bar-label">Ravi Patel</div><div class="bar-track"><div class="bar-fill" style="width:91.1%;background:#1a6fff"></div></div><div class="bar-val">51</div></div>
+      <div class="bar-row"><div class="bar-label">Carlos Mendez</div><div class="bar-track"><div class="bar-fill" style="width:89.3%;background:#1a6fff"></div></div><div class="bar-val">50</div></div>
+      <div class="bar-row"><div class="bar-label">Anna Kowalski</div><div class="bar-track"><div class="bar-fill" style="width:89.3%;background:#1a6fff"></div></div><div class="bar-val">50</div></div>
+      <div class="bar-row"><div class="bar-label">Emma Thompson</div><div class="bar-track"><div class="bar-fill" style="width:87.5%;background:#1a6fff"></div></div><div class="bar-val">49</div></div>
+      <div class="bar-row"><div class="bar-label">James Okafor</div><div class="bar-track"><div class="bar-fill" style="width:83.9%;background:#1a6fff"></div></div><div class="bar-val">47</div></div>
+      <div class="bar-row"><div class="bar-label">Priya Sharma</div><div class="bar-track"><div class="bar-fill" style="width:82.1%;background:#f87171"></div></div><div class="bar-val">46</div></div>
+      <div class="bar-row"><div class="bar-label">Fatima Al-Hassan</div><div class="bar-track"><div class="bar-fill" style="width:82.1%;background:#f87171"></div></div><div class="bar-val">46</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Avg Risk Score by Analyst</div>
+      <div class="bar-row"><div class="bar-label">Priya Sharma</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#dc2626"></div></div><div class="bar-val">52.7</div></div>
+      <div class="bar-row"><div class="bar-label">Fatima Al-Hassan</div><div class="bar-track"><div class="bar-fill" style="width:98%;background:#ea580c"></div></div><div class="bar-val">51.8</div></div>
+      <div class="bar-row"><div class="bar-label">Emma Thompson</div><div class="bar-track"><div class="bar-fill" style="width:96%;background:#d97706"></div></div><div class="bar-val">50.8</div></div>
+      <div class="bar-row"><div class="bar-label">Ravi Patel</div><div class="bar-track"><div class="bar-fill" style="width:93%;background:#d97706"></div></div><div class="bar-val">49.1</div></div>
+      <div class="bar-row"><div class="bar-label">Liu Wei</div><div class="bar-track"><div class="bar-fill" style="width:92%;background:#1a6fff"></div></div><div class="bar-val">48.7</div></div>
+      <div class="bar-row"><div class="bar-label">Tom Becker</div><div class="bar-track"><div class="bar-fill" style="width:91%;background:#1a6fff"></div></div><div class="bar-val">48.4</div></div>
+      <div class="bar-row"><div class="bar-label">James Okafor</div><div class="bar-track"><div class="bar-fill" style="width:91%;background:#1a6fff"></div></div><div class="bar-val">48.2</div></div>
+      <div class="bar-row"><div class="bar-label">Carlos Mendez</div><div class="bar-track"><div class="bar-fill" style="width:84%;background:#0d9488"></div></div><div class="bar-val">44.4</div></div>
+      <div class="bar-row"><div class="bar-label">Anna Kowalski</div><div class="bar-track"><div class="bar-fill" style="width:83%;background:#0d9488"></div></div><div class="bar-val">43.9</div></div>
+      <div class="bar-row"><div class="bar-label">Sarah Mitchell</div><div class="bar-track"><div class="bar-fill" style="width:80%;background:#16a34a"></div></div><div class="bar-val">42.3</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-text">CONFIDENTIAL — INTERNAL USE ONLY · AML/FINANCIAL CRIME PORTFOLIO PROJECT · DATA: SIMULATED FY2023–2024</div>
+  <div class="footer-right">
+    <div class="footer-text">FATF · FCA · JMLSG · OFSI</div>
+    <div class="footer-text">v2.0 · 2024</div>
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function switchTab(name){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
+  document.querySelector('[onclick="switchTab(\''+name+'\')"]').classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+const months=['Jul 23','Aug 23','Sep 23','Oct 23','Nov 23','Dec 23','Jan 24','Feb 24','Mar 24','Apr 24','May 24','Jun 24','Jul 24','Aug 24','Sep 24','Oct 24','Nov 24','Dec 24'];
+const high=[3,2,5,4,5,4,6,3,8,5,3,5,6,4,3,4,6,8];
+const med=[7,4,4,6,6,9,4,11,10,9,5,5,10,6,9,9,8,16];
+const low=[12,10,5,5,12,7,4,8,6,7,6,8,4,10,9,7,7,6];
+
+new Chart(document.getElementById('trendChart'),{
+  type:'line',
+  data:{
+    labels:months,
+    datasets:[
+      {label:'High',data:high,borderColor:'#f87171',backgroundColor:'rgba(248,113,113,0.08)',tension:0.4,fill:true,pointRadius:3,pointBackgroundColor:'#f87171',borderWidth:2},
+      {label:'Medium',data:med,borderColor:'#fbbf24',backgroundColor:'rgba(251,191,36,0.08)',tension:0.4,fill:true,pointRadius:3,pointBackgroundColor:'#fbbf24',borderWidth:2},
+      {label:'Low',data:low,borderColor:'#4ade80',backgroundColor:'rgba(74,222,128,0.06)',tension:0.4,fill:true,pointRadius:3,pointBackgroundColor:'#4ade80',borderWidth:2}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a6380',font:{size:9},maxRotation:45}},
+      y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a6380',font:{size:9}},beginAtZero:true}
+    }
+  }
+});
+
+const dCtx=document.getElementById('donutChart').getContext('2d');
+new Chart(dCtx,{
+  type:'doughnut',
+  data:{
+    labels:['High','Medium','Low'],
+    datasets:[{data:[117,206,177],backgroundColor:['#dc2626','#d97706','#16a34a'],borderColor:'#111827',borderWidth:3,hoverBorderWidth:0}]
+  },
+  options:{
+    responsive:false,cutout:'72%',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} cases`}}}
+  }
+});
+
+new Chart(document.getElementById('resChart'),{
+  type:'bar',
+  data:{
+    labels:['Low Risk','Medium Risk','High Risk'],
+    datasets:[{
+      label:'Avg Days',data:[5,12,22],
+      backgroundColor:['#16a34a','#d97706','#dc2626'],
+      borderRadius:4,borderSkipped:false
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a6380',font:{size:10}}},
+      y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a6380',font:{size:10}},beginAtZero:true,max:30}
+    }
+  }
+});
+
+new Chart(document.getElementById('escalChart'),{
+  type:'bar',
+  data:{
+    labels:['AML','Compliance Review','Fraud','KYC','Txn Monitoring'],
+    datasets:[{
+      label:'Escalated',data:[47,24,31,45,40],
+      backgroundColor:'rgba(220,38,38,0.7)',borderRadius:4
+    },{
+      label:'Not Escalated',data:[102,31,56,67,57],
+      backgroundColor:'rgba(30,58,95,0.8)',borderRadius:4
+    }]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    indexAxis:'y',
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{stacked:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#4a6380',font:{size:9}}},
+      y:{stacked:true,grid:{color:'rgba(255,255,255,0)'},ticks:{color:'#a0b4c8',font:{size:10}}}
+    }
+  }
+});
+</script>
